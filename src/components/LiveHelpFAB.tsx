@@ -25,10 +25,10 @@ export default function LiveHelpFAB({ lang }: LiveHelpFABProps) {
               href="https://wa.me/yournumber"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 bg-white text-navy px-6 py-3 rounded-2xl shadow-xl border border-slate-100 hover:bg-slate-50 transition-colors group"
+              className="flex items-center gap-3 bg-white text-slate-charcoal px-6 py-3 rounded-2xl shadow-xl border border-slate-100 hover:bg-slate-50 transition-colors group"
             >
               <span className="font-bold text-sm">{t.whatsapp}</span>
-              <div className="p-2 bg-emerald-500 text-white rounded-xl group-hover:scale-110 transition-transform">
+              <div className="p-2 bg-emerald-primary text-white rounded-xl group-hover:scale-110 transition-transform">
                 <MessageCircle className="w-5 h-5" />
               </div>
             </a>
@@ -36,10 +36,10 @@ export default function LiveHelpFAB({ lang }: LiveHelpFABProps) {
               href="https://t.me/travel_agency_uzbot"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 bg-white text-navy px-6 py-3 rounded-2xl shadow-xl border border-slate-100 hover:bg-slate-50 transition-colors group"
+              className="flex items-center gap-3 bg-gold-accent text-slate-charcoal px-6 py-3 rounded-2xl shadow-xl border border-gold-accent/20 hover:bg-opacity-90 transition-colors group"
             >
               <span className="font-bold text-sm">{t.telegram}</span>
-              <div className="p-2 bg-sky-500 text-white rounded-xl group-hover:scale-110 transition-transform">
+              <div className="p-2 bg-white text-gold-accent rounded-xl group-hover:scale-110 transition-transform">
                 <Send className="w-5 h-5" />
               </div>
             </a>
@@ -50,7 +50,7 @@ export default function LiveHelpFAB({ lang }: LiveHelpFABProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
-          isOpen ? 'bg-white text-navy rotate-90' : 'bg-navy text-white hover:scale-110'
+          isOpen ? 'bg-white text-emerald-primary rotate-90' : 'bg-emerald-primary text-white hover:scale-110'
         }`}
       >
         {isOpen ? <X className="w-8 h-8" /> : <MessageSquare className="w-8 h-8" />}

@@ -3,13 +3,15 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-navy: #002147;
-  --color-slate-bg: #F8FAFC;
+  --color-emerald-primary: #064E3B;
+  --color-gold-accent: #D4AF37;
+  --color-slate-charcoal: #1E293B;
+  --color-slate-bg: #F1F5F9;
 }
 
 @layer base {
   body {
-    @apply font-sans bg-slate-bg text-navy antialiased;
+    @apply font-sans bg-white text-slate-charcoal antialiased;
   }
 }
 

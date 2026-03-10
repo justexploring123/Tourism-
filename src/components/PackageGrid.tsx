@@ -1,104 +1,135 @@
 import React from 'react';
-import { Hotel, Utensils, Car, Clock, Tag } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Clock, Users, Star, ArrowRight } from 'lucide-react';
 import { Language, translations } from '../translations';
 
 interface PackageGridProps {
   lang: Language;
 }
 
-export default function PackageGrid({ lang }: PackageGridProps) {
+const PackageGrid: React.FC<PackageGridProps> = ({ lang }) => {
   const t = translations[lang].packages;
-  const widgetT = translations[lang].widget;
 
   const experiences = [
     {
-      title: widgetT.destinations.dubai,
-      duration: `7 ${t.days} / 6 ${t.nights}`,
-      price: "1,150",
-      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80",
-      tags: [widgetT.destinations.dubai, widgetT.vibes.luxury]
+      id: 1,
+      title: lang === 'en' ? 'Premium Umrah Experience' : lang === 'uz' ? 'Premium Umra tajribasi' : 'Премиум Умра опыт',
+      location: lang === 'en' ? 'Saudi Arabia' : lang === 'uz' ? 'Saudiya Arabistoni' : 'Саудовская Аравия',
+      duration: `14 ${t.days}`,
+      price: '$1,250',
+      rating: 4.9,
+      reviews: 128,
+      image: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?auto=format&fit=crop&q=80&w=800',
+      badge: t.umrahBadge,
+      tags: [t.hotel, t.meals, t.transport]
     },
     {
-      title: widgetT.destinations.antalya,
-      duration: `10 ${t.days} / 9 ${t.nights}`,
-      price: "1,450",
-      image: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=800&q=80",
-      tags: [widgetT.destinations.antalya, widgetT.vibes.relaxed]
+      id: 2,
+      title: lang === 'en' ? 'Dubai City & Desert Escape' : lang === 'uz' ? 'Dubay shahar va sahro sarguzashti' : 'Дубай: Город и Пустыня',
+      location: lang === 'en' ? 'United Arab Emirates' : lang === 'uz' ? 'BAA' : 'ОАЭ',
+      duration: `7 ${t.days}`,
+      price: '$850',
+      rating: 4.8,
+      reviews: 95,
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800',
+      badge: t.dubaiBadge,
+      tags: [t.hotel, t.transport]
     },
     {
-      title: widgetT.destinations.sharm,
-      duration: `8 ${t.days} / 7 ${t.nights}`,
-      price: "980",
-      image: "https://images.unsplash.com/photo-1510009489794-352fba39a0b8?auto=format&fit=crop&w=800&q=80",
-      tags: [widgetT.destinations.sharm, widgetT.vibes.adventure]
+      id: 3,
+      title: lang === 'en' ? 'Grand Europe Discovery' : lang === 'uz' ? 'Buyuk Yevropa kashfiyoti' : 'Великое открытие Европы',
+      location: lang === 'en' ? 'Europe' : lang === 'uz' ? 'Yevropa' : 'Европа',
+      duration: `12 ${t.days}`,
+      price: '$1,850',
+      rating: 4.7,
+      reviews: 64,
+      image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&q=80&w=800',
+      badge: t.europeBadge,
+      tags: [t.hotel, t.meals, t.transport]
     }
   ];
 
   return (
-    <section className="py-24 px-4 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">{t.title}</h2>
+    <section className="py-20 bg-slate-bg" id="experiences">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16 space-y-4">
+          <h2 className="text-4xl font-bold text-slate-charcoal">{t.title}</h2>
           <p className="text-slate-500 max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {experiences.map((exp, idx) => (
-            <div key={idx} className="group bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {experiences.map((exp, index) => (
+            <motion.div
+              key={exp.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-100"
+            >
               <div className="relative h-64 overflow-hidden">
                 <img 
                   src={exp.image} 
-                  alt={exp.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  alt={exp.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-white/90 backdrop-blur-sm text-navy px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm">
-                    <Clock className="w-3 h-3" /> {exp.duration}
+                  <span className="px-4 py-2 bg-emerald-primary text-white text-xs font-bold rounded-full shadow-lg">
+                    {exp.badge}
                   </span>
                 </div>
+                <div className="absolute bottom-4 right-4">
+                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                    <Star className="w-4 h-4 text-gold-accent fill-gold-accent" />
+                    <span className="text-sm font-bold text-slate-charcoal">{exp.rating}</span>
+                  </div>
+                </div>
               </div>
-              
-              <div className="p-8">
-                <div className="flex flex-wrap gap-2 mb-4">
+
+              <div className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-emerald-primary uppercase tracking-wider">{exp.location}</p>
+                  <h3 className="text-xl font-bold text-slate-charcoal group-hover:text-emerald-primary transition-colors">
+                    {exp.title}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-slate-500">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {exp.duration}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    {exp.reviews} {lang === 'en' ? 'reviews' : lang === 'uz' ? 'fikrlar' : 'отзывов'}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
                   {exp.tags.map(tag => (
-                    <span key={tag} className="text-[10px] uppercase tracking-wider font-bold text-slate-400 border border-slate-200 px-2 py-0.5 rounded">
+                    <span key={tag} className="px-3 py-1 bg-slate-50 text-slate-500 text-xs font-medium rounded-full border border-slate-100">
                       {tag}
                     </span>
                   ))}
                 </div>
-                
-                <h3 className="text-2xl font-bold text-navy mb-2">{exp.title}</h3>
-                
-                <div className="flex items-center gap-1 text-navy mb-6">
-                  <span className="text-sm font-medium opacity-60">{t.startingFrom}</span>
-                  <span className="text-2xl font-bold">${exp.price}</span>
-                </div>
 
-                <div className="pt-6 border-t border-slate-200 flex items-center justify-between">
-                  <div className="flex gap-4">
-                    <div className="group/icon relative">
-                      <Hotel className="w-5 h-5 text-slate-400 group-hover:text-navy transition-colors" />
-                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/icon:opacity-100 transition-opacity whitespace-nowrap">{t.hotel}</span>
-                    </div>
-                    <div className="group/icon relative">
-                      <Utensils className="w-5 h-5 text-slate-400 group-hover:text-navy transition-colors" />
-                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/icon:opacity-100 transition-opacity whitespace-nowrap">{t.meals}</span>
-                    </div>
-                    <div className="group/icon relative">
-                      <Car className="w-5 h-5 text-slate-400 group-hover:text-navy transition-colors" />
-                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/icon:opacity-100 transition-opacity whitespace-nowrap">{t.transport}</span>
-                    </div>
+                <div className="pt-4 flex items-center justify-between border-t border-slate-50">
+                  <div>
+                    <p className="text-xs text-slate-400">{t.startingFrom}</p>
+                    <p className="text-2xl font-bold text-emerald-primary">{exp.price}</p>
                   </div>
-                  <button className="text-navy font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                    {t.details} <Tag className="w-4 h-4" />
+                  <button className="p-3 rounded-xl bg-slate-50 text-emerald-primary hover:bg-emerald-primary hover:text-white transition-all group/btn">
+                    <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default PackageGrid;

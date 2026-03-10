@@ -1,278 +1,250 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Palmtree, 
-  Sun, 
-  Waves, 
-  Map, 
+  ChevronRight, 
+  ChevronLeft, 
   Users, 
-  User, 
-  Zap, 
-  Coffee, 
-  Crown, 
-  ArrowRight, 
-  ChevronLeft,
+  Briefcase, 
+  Globe, 
+  Moon,
+  Sparkles,
+  Coffee,
+  Compass,
+  Send,
+  User,
   Plus,
-  Minus,
-  Send
+  Minus
 } from 'lucide-react';
 import { Language, translations } from '../translations';
-
-type Step = 1 | 2 | 3;
-
-interface Selection {
-  destination: string;
-  adults: number;
-  children: number;
-  vibe: string;
-}
 
 interface DiscoveryWidgetProps {
   lang: Language;
 }
 
-export default function DiscoveryWidget({ lang }: DiscoveryWidgetProps) {
-  const t = translations[lang].widget;
-  const [step, setStep] = useState<Step>(1);
-  const [selection, setSelection] = useState<Selection>({
-    destination: '',
+const DiscoveryWidget: React.FC<DiscoveryWidgetProps> = ({ lang }) => {
+  const [step, setStep] = useState(1);
+  const [selection, setSelection] = useState({
+    type: '',
     adults: 2,
     children: 0,
     vibe: ''
   });
 
-  const nextStep = () => setStep((prev) => (prev < 3 ? (prev + 1) as Step : prev));
-  const prevStep = () => setStep((prev) => (prev > 1 ? (prev - 1) as Step : prev));
+  const t = translations[lang].widget;
 
-  const handleFinish = () => {
-    const text = `Hi! I'm interested in a trip to ${selection.destination}. We are ${selection.adults} adults and ${selection.children} children. We're looking for a ${selection.vibe} vibe. (Language: ${lang})`;
-    const encodedText = encodeURIComponent(text);
-    window.open(`https://t.me/travel_agency_uzbot?start=${encodedText}`, '_blank');
-  };
-
-  const destinations = [
-    { id: 'dubai', label: t.destinations.dubai, icon: Building2 },
-    { id: 'antalya', label: t.destinations.antalya, icon: Sun },
-    { id: 'sharm', label: t.destinations.sharm, icon: Waves },
-    { id: 'custom', label: t.destinations.custom, icon: Map },
+  const tripTypes = [
+    { id: 'umrah', label: t.destinations.umrah, icon: Moon },
+    { id: 'family', label: t.destinations.family, icon: Users },
+    { id: 'vip', label: t.destinations.vip, icon: Briefcase },
+    { id: 'group', label: t.destinations.group, icon: Globe },
   ];
 
   const vibes = [
-    { id: 'adventure', label: t.vibes.adventure, icon: Zap },
+    { id: 'spiritual', label: t.vibes.spiritual, icon: Moon },
+    { id: 'adventure', label: t.vibes.adventure, icon: Compass },
     { id: 'relaxed', label: t.vibes.relaxed, icon: Coffee },
-    { id: 'luxury', label: t.vibes.luxury, icon: Crown },
+    { id: 'luxury', label: t.vibes.luxury, icon: Sparkles },
   ];
 
+  const handleNext = () => setStep(s => Math.min(s + 1, 3));
+  const handleBack = () => setStep(s => Math.max(s - 1, 1));
+
+  const handleFinish = () => {
+    const message = `Marhaba Travel Inquiry:
+Type: ${selection.type}
+Group: ${selection.adults} Adults, ${selection.children} Children
+Vibe: ${selection.vibe}
+Language: ${lang}`;
+    
+    const encoded = encodeURIComponent(message);
+    window.open(`https://t.me/travel_agency_uzbot?text=${encoded}`, '_blank');
+  };
+
   return (
-    <div id="discovery-widget" className="max-w-2xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-        {/* Progress Bar */}
-        <div className="h-1.5 w-full bg-slate-100 flex">
-          <motion.div 
-            className="h-full bg-navy"
-            initial={{ width: '33.33%' }}
-            animate={{ width: `${(step / 3) * 100}%` }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-          />
-        </div>
+    <div className="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden" id="discovery-widget">
+      {/* Progress Bar */}
+      <div className="h-1.5 w-full bg-slate-100">
+        <motion.div 
+          className="h-full bg-emerald-primary"
+          initial={{ width: '33.33%' }}
+          animate={{ width: `${(step / 3) * 100}%` }}
+        />
+      </div>
 
-        <div className="p-8 md:p-12">
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-              >
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-navy mb-2">{t.step1Title}</h3>
-                  <p className="text-slate-500">{t.step1Sub}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {destinations.map((dest) => (
-                    <button
-                      key={dest.id}
-                      onClick={() => {
-                        setSelection({ ...selection, destination: dest.label });
-                        nextStep();
-                      }}
-                      className={`p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 group ${
-                        selection.destination === dest.label 
-                        ? 'border-navy bg-navy text-white' 
-                        : 'border-slate-100 hover:border-navy/30 bg-slate-50 text-navy'
-                      }`}
-                    >
-                      <dest.icon className={`w-8 h-8 ${selection.destination === dest.label ? 'text-white' : 'text-navy group-hover:scale-110 transition-transform'}`} />
-                      <span className="font-semibold">{dest.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+      <div className="p-8 md:p-10">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold text-slate-charcoal">{t.step1Title}</h3>
+                <p className="text-slate-500">{t.step1Sub}</p>
+              </div>
 
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-10"
-              >
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-navy mb-2">{t.step2Title}</h3>
-                  <p className="text-slate-500">{t.step2Sub}</p>
-                </div>
-                
-                <div className="space-y-8">
-                  <div className="flex items-center justify-between bg-slate-50 p-6 rounded-2xl">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-white rounded-xl shadow-sm">
-                        <User className="w-6 h-6 text-navy" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-navy">{t.adults}</p>
-                        <p className="text-xs text-slate-400">{t.ages13}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => setSelection({...selection, adults: Math.max(1, selection.adults - 1)})}
-                        className="p-2 rounded-full border border-slate-200 hover:bg-white transition-colors"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="text-xl font-bold w-6 text-center">{selection.adults}</span>
-                      <button 
-                        onClick={() => setSelection({...selection, adults: selection.adults + 1})}
-                        className="p-2 rounded-full border border-slate-200 hover:bg-white transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between bg-slate-50 p-6 rounded-2xl">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-white rounded-xl shadow-sm">
-                        <Users className="w-6 h-6 text-navy" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-navy">{t.children}</p>
-                        <p className="text-xs text-slate-400">{t.ages2}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => setSelection({...selection, children: Math.max(0, selection.children - 1)})}
-                        className="p-2 rounded-full border border-slate-200 hover:bg-white transition-colors"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="text-xl font-bold w-6 text-center">{selection.children}</span>
-                      <button 
-                        onClick={() => setSelection({...selection, children: selection.children + 1})}
-                        className="p-2 rounded-full border border-slate-200 hover:bg-white transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  <button onClick={prevStep} className="flex-1 py-4 px-6 rounded-xl border border-slate-200 font-semibold text-navy hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
-                    <ChevronLeft className="w-4 h-4" /> {t.back}
-                  </button>
-                  <button onClick={nextStep} className="flex-[2] py-4 px-6 rounded-xl bg-navy text-white font-semibold hover:bg-navy/90 transition-colors flex items-center justify-center gap-2">
-                    {t.next} <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {step === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-              >
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-navy mb-2">{t.step3Title}</h3>
-                  <p className="text-slate-500">{t.step3Sub}</p>
-                </div>
-
-                <div className="space-y-3">
-                  {vibes.map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelection({ ...selection, vibe: v.label })}
-                      className={`w-full p-5 rounded-2xl border-2 transition-all flex items-center gap-4 ${
-                        selection.vibe === v.label 
-                        ? 'border-navy bg-navy/5 text-navy' 
-                        : 'border-slate-100 hover:border-navy/20 bg-slate-50 text-slate-600'
-                      }`}
-                    >
-                      <div className={`p-3 rounded-xl ${selection.vibe === v.label ? 'bg-navy text-white' : 'bg-white text-navy'}`}>
-                        <v.icon className="w-6 h-6" />
-                      </div>
-                      <span className="font-bold text-lg">{v.label}</span>
-                      {selection.vibe === v.label && (
-                        <div className="ml-auto w-6 h-6 bg-navy rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  <button onClick={prevStep} className="flex-1 py-4 px-6 rounded-xl border border-slate-200 font-semibold text-navy hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
-                    <ChevronLeft className="w-4 h-4" /> {t.back}
-                  </button>
-                  <button 
-                    disabled={!selection.vibe}
-                    onClick={handleFinish} 
-                    className="flex-[2] py-4 px-6 rounded-xl bg-navy text-white font-semibold hover:bg-navy/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-navy/20"
+              <div className="grid grid-cols-2 gap-4">
+                {tripTypes.map((type) => (
+                  <button
+                    key={type.id}
+                    onClick={() => {
+                      setSelection({ ...selection, type: type.label });
+                      handleNext();
+                    }}
+                    className={`p-6 rounded-2xl border-2 transition-all text-center space-y-3 group ${
+                      selection.type === type.label 
+                        ? 'border-emerald-primary bg-emerald-50' 
+                        : 'border-slate-100 hover:border-emerald-200 hover:bg-slate-50'
+                    }`}
                   >
-                    {t.connect} <Send className="w-4 h-4" />
+                    <type.icon className={`w-8 h-8 mx-auto ${
+                      selection.type === type.label ? 'text-emerald-primary' : 'text-slate-400 group-hover:text-emerald-primary'
+                    }`} />
+                    <span className="block font-medium text-slate-charcoal">{type.label}</span>
                   </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold text-slate-charcoal">{t.step2Title}</h3>
+                <p className="text-slate-500">{t.step2Sub}</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white rounded-xl shadow-sm">
+                      <User className="w-6 h-6 text-emerald-primary" />
+                    </div>
+                    <div>
+                      <span className="block font-bold text-slate-charcoal">{t.adults}</span>
+                      <span className="text-sm text-slate-500">{t.ages13}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => setSelection({...selection, adults: Math.max(1, selection.adults - 1)})}
+                      className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    ><Minus className="w-4 h-4" /></button>
+                    <span className="w-6 text-center font-bold">{selection.adults}</span>
+                    <button 
+                      onClick={() => setSelection({...selection, adults: selection.adults + 1})}
+                      className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    ><Plus className="w-4 h-4" /></button>
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white rounded-xl shadow-sm">
+                      <Users className="w-6 h-6 text-emerald-primary" />
+                    </div>
+                    <div>
+                      <span className="block font-bold text-slate-charcoal">{t.children}</span>
+                      <span className="text-sm text-slate-500">{t.ages2}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => setSelection({...selection, children: Math.max(0, selection.children - 1)})}
+                      className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    ><Minus className="w-4 h-4" /></button>
+                    <span className="w-6 text-center font-bold">{selection.children}</span>
+                    <button 
+                      onClick={() => setSelection({...selection, children: selection.children + 1})}
+                      className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    ><Plus className="w-4 h-4" /></button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={handleBack}
+                  className="flex-1 py-4 px-6 rounded-2xl border border-slate-200 font-bold text-slate-charcoal hover:bg-slate-50 flex items-center justify-center gap-2"
+                >
+                  <ChevronLeft className="w-5 h-5" /> {t.back}
+                </button>
+                <button 
+                  onClick={handleNext}
+                  className="flex-[2] py-4 px-6 rounded-2xl bg-emerald-primary text-white font-bold hover:bg-emerald-900 transition-colors flex items-center justify-center gap-2"
+                >
+                  {t.next} <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold text-slate-charcoal">{t.step3Title}</h3>
+                <p className="text-slate-500">{t.step3Sub}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {vibes.map((vibe) => (
+                  <button
+                    key={vibe.id}
+                    onClick={() => setSelection({ ...selection, vibe: vibe.label })}
+                    className={`p-6 rounded-2xl border-2 transition-all text-center space-y-3 group ${
+                      selection.vibe === vibe.label 
+                        ? 'border-emerald-primary bg-emerald-50' 
+                        : 'border-slate-100 hover:border-emerald-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <vibe.icon className={`w-8 h-8 mx-auto ${
+                      selection.vibe === vibe.label ? 'text-emerald-primary' : 'text-slate-400 group-hover:text-emerald-primary'
+                    }`} />
+                    <span className="block font-medium text-slate-charcoal">{vibe.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button 
+                  onClick={handleBack}
+                  className="flex-1 py-4 px-6 rounded-2xl border border-slate-200 font-bold text-slate-charcoal hover:bg-slate-50 flex items-center justify-center gap-2"
+                >
+                  <ChevronLeft className="w-5 h-5" /> {t.back}
+                </button>
+                <button 
+                  onClick={handleFinish}
+                  disabled={!selection.vibe}
+                  className={`flex-[2] py-4 px-6 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    selection.vibe 
+                      ? 'bg-gold-accent text-slate-charcoal hover:bg-opacity-90 shadow-lg' 
+                      : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  {t.connect} <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
-}
+};
 
-// Helper to keep icons working
-function Building2(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
-      <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
-      <path d="M10 6h4" />
-      <path d="M10 10h4" />
-      <path d="M10 14h4" />
-      <path d="M10 18h4" />
-    </svg>
-  );
-}
-
+export default DiscoveryWidget;
